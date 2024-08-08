@@ -1,6 +1,6 @@
-# Serv00与CT8自动化部署启动，保活，节点被删自动重新部署，发送节点消息到Telegram
+# Serv00与CT8自动化部署启动，保号续期保活，节点被删自动重新部署，发送节点消息到Telegram
 
-## 利用github Action以及python脚本实现，支持多个账号批量部署，首次部署自动绑定ip,生成证书
+## 利用github Action以及python脚本实现，支持多个账号批量部署，CF CDN自动配置
 
 ## 🙏🙏🙏点个Star！！Star！！Star！！
 
@@ -56,7 +56,10 @@
     "tg_chat_id": "tg chat id",
     "send_tg": 1,
     "node_num": 2,
-    "usepm2": 0
+    "usepm2": 0,
+    "cf_token": "xxx",
+    "cf_username": "xxx"
+    
   },
   "accounts": [
     {
@@ -66,7 +69,8 @@
       "pannelnum": 6,
       "cmd":"python reset 20",
       "server_type": 1,
-      "is_first": 0
+      "use_cf": 1,
+      "ssl_domains": "xxx.username.us.kg,xxx2.username.us.kg"
     },
     {
       "username": "【用户名】",
@@ -75,7 +79,7 @@
       "pannelnum": 6,
       "cmd":"python reset 20",
       "server_type": 1,
-      "is_first": 0
+      "use_cf": 0
     }
   ]
 }
@@ -85,7 +89,7 @@
 **3、Setting->Secrets->actions 添加secrets名称：ENV_CMD,值复制下面内容**
 
 ```
-py restart 20
+py restart 30
 ```
 
 **4、ENV_CONFIG 配置项参数说明**
@@ -102,22 +106,24 @@ py restart 20
 
 **3、USER_INFO 配置项参数说明**
 
-|参数名称|参数说明|
-|--|--|
-|tg_chat_id|Chat ID  当send_tg=0此项默认即可|
-|send_tg|是否需要发送节点信息到telegram ,1:开启 0：不开启|
-|node_num|开启节点个数，由于节点serv00端口限制，最多可设3个，默认2个|
-|usepm2|是否开启pm2 1:开启 0：不开启 ,默认不开启, 比较耗资源建议不开启|
-|username|**用户名**|
-|password|**密码**|
-|domain|**你申请的域名，如CF绑定的域名**|
-|pannelnum|你申请机器号,如panel6.serv00.com就设置为6, CT8此项默认即可|
-|server_type|服务器类型 1: Serv00  2: CT8  ，默认为1|
-|cmd|**reset:重新安装节点 ,keepalive:保活 ,restart:只重启 ,三种模式后面参数都可跟保活间隔时间 ,单位为分钟 如： python restart 20 ,就表示重启并保活 时间设置为20分钟，若不加时间参数，则不会进行节点保活**|
-|basepath|节点部署目录：默认 /home/XXX[用户名]/domains/XXX[域名]/app2/serv00-ws/|
-|tg_bot_token|申请tg机器人的token|
-|is_first|**是否首次部署 1：是， 0：不是 注此操作会帮域名绑定ip，申请证书，只限机器首次部署操作，后面启动配置要改成0**|
-
+|参数名称| 参数说明                                                                                                                             |
+|--|----------------------------------------------------------------------------------------------------------------------------------|
+|tg_chat_id| Chat ID  当send_tg=0此项默认即可                                                                                                        |
+|send_tg| 是否需要发送节点信息到telegram ,1:开启 0：不开启                                                                                                  |
+|node_num| 开启节点个数，由于节点serv00端口限制，最多可设3个，默认2个                                                                                                |
+|usepm2| 是否开启pm2 1:开启 0：不开启 ,默认不开启, 比较耗资源建议不开启                                                                                            |
+|username| **用户名**                                                                                                                          |
+|password| **密码**                                                                                                                           |
+|domain| **你申请的域名，如CF绑定的域名,或serv00默认域名**                                                                                                  |
+|pannelnum| 你申请机器号,如panel6.serv00.com就设置为6, CT8此项默认即可                                                                                        |
+|server_type| 服务器类型 1: Serv00  2: CT8  ，默认为1                                                                                                   |
+|cmd| **reset:重新安装节点 ,keepalive:保活 ,restart:只重启 ,三种模式后面参数都可跟保活间隔时间 ,单位为分钟 如： python restart 20 ,就表示重启并保活 时间设置为20分钟，若不加时间参数，则不会进行节点保活** |
+|basepath| 节点部署目录：默认 /home/XXX[用户名]/domains/XXX[域名]/app2/serv00-ws/                                                                         |
+|tg_bot_token| 申请tg机器人的token                                                                                                                    |
+|cf_username| cloudflare 用户名 当use_cf=0 此项默认即可                                                                                                  |
+|cf_token| cloudflare API 密钥 （**Global API Key**） https://dash.cloudflare.com/profile/api-tokens ，当use_cf=0此项默认即可                           |
+|use_cf| 是否开启CF CDN 1：开启 0：不开启                                                                                                            |
+|ssl_domains| 当use_cf =1时 此项必填，CF CDN记录配置域名如：test.junx066.us.kg 多个域名以英文逗号隔开                                                                    |
 ## (四). 启动 GitHub Actions
 
 ```
